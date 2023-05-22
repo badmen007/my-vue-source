@@ -7,9 +7,40 @@
     <title>Document</title>
 </head>
 <body>
+    <div id="app"></div>
     <script type="module">
-        import { isObject } from './reactivity.js'
-        console.log(isObject({}))
+        // 原生使用
+        // import { reactive, effect } from '/node_modules/@vue/reactivity/dist/reactivity.esm-browser.js'
+        // const state = reactive({name: 'xz', age: 20})
+        // // 默认会执行一次，数据变化了之后再执行一次
+        // effect(() => {
+        //     app.innerHTML = state.name + ',' + state.age
+        // })
+        // setTimeout(() => {
+        //     state.age ++
+        // },1000)
+        import { reactive, effect } from './reactivity.js'
+        const data = {name: 'xz', age: 20}
+        // 怎么防止一个数据被代理多次
+        // const state1 = reactive(data)
+        // const state2 = reactive(data)
+        // 代理了又被代理，会返回同一个对象
+        // const state2 = reactive(state1)
+        // console.log(state1 === state2)
+        const state = reactive(data)
+        effect(() => {
+            app.innerHTML = state.name + ',' + state.age
+        })
+
+        // 栈结构
+        // effect(() => { // activeEffect = effect1
+        //     state.name
+        //     effect(() => { // effect2.parent = activeEffect
+        //         // activeEffect = effect2
+        //         state.age
+        //     }) // activeEffect = effect2.parent
+        //     state.address // 收集的是哪个effect
+        // })
     </script>
 </body>
 </html>
