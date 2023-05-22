@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "outDir": "dist", // path to output directory
+    "sourceMap": true, // allow sourcemap support
+    "target": "ES2016", // specify ECMAScript target version
+    "module": "ESNext", // specify module code generation
+    "moduleResolution": "node", // node module resolution
+    "strict": false, // enable all strict type-checking options
+    "resolveJsonModule": true, // allow importing .json files
+    "esModuleInterop": true, // allow default imports from modules with no default export
+    "jsx":"preserve", // preserve jsx 不转义jsx
+    "lib": ["esnext", "dom"], // specify library files to be included in the compilation
+    "baseUrl": "./", // base path to resolve non-absolute module names
+    "paths": {
+      "@vue/*": ["packages/*/src"]
+    }
+  }
+}
