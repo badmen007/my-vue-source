@@ -8,3 +8,5 @@
 - 支持typescript pnpm install typescript -w , pnpm tsc --init
 
 - 两个包之间怎么相互依赖
+
+- 打包之后的种类 1. esm-bundler 2. esm-browser 3. cjs 4. global 这几种有什么区别
