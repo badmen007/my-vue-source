@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>computed</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="module">
+        // computed watch watchEffect -> 基于 effect
+
+        // 计算属性的特点
+        // 1. 不用就不计算
+        // 2. 计算属性得有同步的返回值
+        // 3. 如果依赖的值不变，就不会重新执行
+        // 4. 计算属性不能修改本身的值，可以去修改其他的属性
+        // 5. 计算属性可以在模版中使用
+        // import { reactive, effect, computed } from '/node_modules/@vue/reactivity/dist/reactivity.esm-browser.js'
+        import { reactive, effect, computed } from './reactivity.js'
+
+        const state = reactive({ firstName: '张', lastName: '三' })
+
+        // 写法一
+        // const fullName = computed(() => {
+        //     console.log('computed执行了')
+        //     return state.firstName + state.lastName
+        // })
+
+        // 写法二
+        const fullName = computed({
+            get() {
+                console.log('computed执行了')
+                return state.firstName + state.lastName
+            },
+            set(val) {
+                console.log(val)
+            }
+        })
+        effect(() => {
+            console.log(fullName.value)
+        })
+        setTimeout(() => {
+            state.firstName = '李'
+        }, 1000)
+    </script>
+</body>
+</html>

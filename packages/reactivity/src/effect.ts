@@ -11,7 +11,7 @@ function cleanupEffect(effect) {
     effect.deps.length = 0
 }
 
-class ReactiveEffect{
+export class ReactiveEffect{
     parent = undefined
     constructor(public fn, public scheduler) {}
     deps = []

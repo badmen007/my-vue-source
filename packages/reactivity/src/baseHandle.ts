@@ -1,5 +1,5 @@
 import { isObject } from "@vue/shared"
-import { activeEffect, effect } from "./effect"
+import { activeEffect } from "./effect"
 import { reactive } from "./reactive"
 
 export const enum ReactiveFlags { 
@@ -42,11 +42,7 @@ function track(target, key) {
         if (!dep) {
             depsMap.set(key, (dep = new Set()))
         }
-        let shouldTrack = dep.has(activeEffect)
-        if (!shouldTrack) {
-            dep.add(activeEffect)
-            activeEffect.deps.push(dep) // effect记录有哪些属性
-        }
+        trackEffect(dep)
     }
 }
 
@@ -55,6 +51,18 @@ function trigger(target, key, value, oldValue) {
     const depsMap = targetMap.get(target)
     if (!depsMap) return
     let effects = depsMap.get(key)
+    triggerEffect(effects)
+}
+
+export function trackEffect(dep) {
+    let shouldTrack = dep.has(activeEffect)
+    if (!shouldTrack) {
+        dep.add(activeEffect)
+        activeEffect.deps.push(dep) // effect记录有哪些属性
+    }
+}
+
+export function triggerEffect(effects) {
     if (effects) {
         effects = [...effects]; // 先拷贝 在循环 不会导致死循环
         effects.forEach(effect => {
