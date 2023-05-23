@@ -1,4 +1,6 @@
-import { activeEffect } from "./effect"
+import { isObject } from "@vue/shared"
+import { activeEffect, effect } from "./effect"
+import { reactive } from "./reactive"
 
 export const enum ReactiveFlags { 
     'IS_REACTIVE' = '__v_isReactive',
@@ -10,11 +12,19 @@ export const mutableHandlers = {
             return true
         }
         track(target, key)
-        return Reflect.get(target, key, receiver)
+        let result = Reflect.get(target, key, receiver)
+        if (isObject(result)) { // 如果是对象，递归代理
+            return reactive(result)
+        }
+        return result
     },
     set(target, key, value, receiver) {
-        target[key] = value
-        return Reflect.set(target, key, value, receiver)
+        const oldValue = target[key]
+        let flag = Reflect.set(target, key, value, receiver)
+        if (value !== oldValue) {
+            trigger(target, key, value, oldValue)
+        }
+        return flag
     }
 }
 
@@ -38,4 +48,24 @@ function track(target, key) {
             activeEffect.deps.push(dep) // effect记录有哪些属性
         }
     }
+}
+
+function trigger(target, key, value, oldValue) {
+    // 找到effect执行就行
+    const depsMap = targetMap.get(target)
+    if (!depsMap) return
+    let effects = depsMap.get(key)
+    if (effects) {
+        effects = [...effects]; // 先拷贝 在循环 不会导致死循环
+        effects.forEach(effect => {
+            if (activeEffect !== effect) { // 防止死循环
+                if (effect.scheduler) {
+                    // 当传递了scheduler的话，要执行scheduler，不执行run方法
+                    effect.scheduler(effect)
+                } else {
+                    effect.run()
+                }
+            }
+        })
+    }    
 }

@@ -20,7 +20,7 @@
         //     state.age ++
         // },1000)
         import { reactive, effect } from './reactivity.js'
-        const data = {name: 'xz', age: 20}
+        const data = {name: 'xz', age: 20, address: { x: 100 }}
         // 怎么防止一个数据被代理多次
         // const state1 = reactive(data)
         // const state2 = reactive(data)
@@ -28,9 +28,13 @@
         // const state2 = reactive(state1)
         // console.log(state1 === state2)
         const state = reactive(data)
-        effect(() => {
-            app.innerHTML = state.name + ',' + state.age
-        })
+        // effect(() => {
+        //     app.innerHTML = state.name + ',' + state.age
+        // })
+
+        // setTimeout(() => {
+        //     state.age ++
+        // },1000)
 
         // 栈结构
         // effect(() => { // activeEffect = effect1
@@ -41,6 +45,31 @@
         //     }) // activeEffect = effect2.parent
         //     state.address // 收集的是哪个effect
         // })
+        let isFlushing = false
+        const runner = effect(() => {
+            console.log('runner')
+            app.innerHTML = state.address.x;
+        }, {
+            scheduler() {
+                if (!isFlushing) {
+                    Promise.resolve().then(() => {
+                        // 异步更新 下面的三次更新只更新一次
+                        runner()
+                        isFlushing = false
+                    })
+                    isFlushing = true
+                }
+            }
+        })
+
+        // state.name = 1;
+        // state.name = 2;
+        // state.name = 3;
+        
+        setTimeout(() => {
+            state.address.x = 200
+        }, 1000)
+
     </script>
 </body>
 </html>
