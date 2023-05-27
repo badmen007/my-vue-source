@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="module">
+        import { reactive, watch, watchEffect } from './reactivity.js'
+        const state = reactive({firstName: 'x', lastName: 'z', age: 20, n: 0 })
+
+        // 分页请求 pageSize limit search 任何一个变了就要发请求
+        watchEffect(() => {
+            app.innerHTML = state.firstName + state.lastName
+        })
+
+        setTimeout(() => {
+            state.firstName = 'l'
+        }, 1000)
+        
+    </script>
+</body>
+</html>
