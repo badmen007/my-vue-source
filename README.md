@@ -10,3 +10,5 @@
 - 两个包之间怎么相互依赖
 
 - 打包之后的种类 1. esm-bundler 2. esm-browser 3. cjs 4. global 这几种有什么区别
+
+- runtime-dom(浏览器操作的api，dom的增删改查) / runtime-core
